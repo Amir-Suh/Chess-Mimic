@@ -17,9 +17,8 @@ list_of_games = []
 X_tensors, y_labels = [], []
 move_to_index, index_to_move = {}, {}
 
-# -----------------------------
+
 # Encode board as 8x8x12 tensor
-# -----------------------------
 def board_to_tensor(board):
     matrix = np.zeros((8, 8, 12), dtype=np.float32)
     piece_map = board.piece_map()
@@ -30,9 +29,8 @@ def board_to_tensor(board):
         matrix[row, col, piece_type + piece_color] = 1.0
     return matrix
 
-# -----------------------------
+
 # Add a PGN game to dataset
-# -----------------------------
 def add_game(moves):
     global X_tensors, y_labels
     board = chess.Board()
@@ -80,9 +78,9 @@ def clean_pgn(pgn_text):
     tokens = pgn_text.split()
     return ' '.join([token for token in tokens if not token.endswith('...')])
 
-# -----------------------------
+
 # Download games from Chess.com
-# -----------------------------
+
 def get_game_data(username):
     archive_response = requests.get(f"https://api.chess.com/pub/player/{username}/games/archives", headers=headers)
     if not archive_response.ok:
@@ -114,9 +112,8 @@ def get_game_data(username):
                 return
     print(f"Collected {count_games} games in total.")
 
-# -----------------------------
+
 # Train CNN model
-# -----------------------------
 def train_model_tf():
     if not y_labels:
         print("No training data collected.")
@@ -141,10 +138,7 @@ def train_model_tf():
     print(f"Trained on {len(y_labels)} positions.")
     model.save("TF_CNN_Model.keras")
     return model
-
-# -----------------------------
 # Predict move with CNN
-# -----------------------------
 def predict_move_tf(board, model):
     features = board_to_tensor(board).reshape(1, 8, 8, 12)
     preds = model.predict(features, verbose=0)
@@ -157,9 +151,8 @@ def predict_move_tf(board, model):
                 return move_san
     return None
 
-# -----------------------------
 # Check historical games for exact move (random choice if multiple)
-# -----------------------------
+
 def find_exact_move_random(board, current_game):
     move_number = len(current_game)
     matching_moves = []
@@ -188,9 +181,8 @@ def find_exact_move_random(board, current_game):
         return random.choice(matching_moves)
     return None
 
-# -----------------------------
+
 # Play a game loop with historical check + CNN
-# -----------------------------
 def lets_play(model):
     board = chess.Board()
     current_game = {}
@@ -254,3 +246,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
