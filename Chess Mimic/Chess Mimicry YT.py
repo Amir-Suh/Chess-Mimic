@@ -16,9 +16,7 @@ list_of_games = []
 X_tensors, y_labels = [], []
 move_to_index, index_to_move = {}, {}
 
-# -----------------------------
-# Encode board as 8x8x12 tensor
-# -----------------------------
+#Encode the 8x8x12 Tensor from dataset
 def board_to_tensor(board):
     matrix = np.zeros((8, 8, 12), dtype=np.float32)
     piece_map = board.piece_map()
@@ -29,9 +27,7 @@ def board_to_tensor(board):
         matrix[row, col, piece_type + piece_color] = 1.0
     return matrix
 
-# -----------------------------
-# Add a PGN game to dataset
-# -----------------------------
+#After Cleaning PGN games add to the data set
 def add_game(moves):
     global X_tensors, y_labels
     board = chess.Board()
@@ -79,9 +75,7 @@ def clean_pgn(pgn_text):
     tokens = pgn_text.split()
     return ' '.join([token for token in tokens if not token.endswith('...')])
 
-# -----------------------------
-# Download games from Chess.com
-# -----------------------------
+#Extract Player Inputted Games from Chess.com
 def get_game_data(username):
     archive_response = requests.get(f"https://api.chess.com/pub/player/{username}/games/archives", headers=headers)
     if not archive_response.ok:
@@ -195,3 +189,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
